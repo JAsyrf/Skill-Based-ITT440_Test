@@ -1,0 +1,20 @@
+import socket
+
+def main():
+    server_host = '192.168.206.130'
+    server_port = 12345
+
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    client_socket.connect((server_host, server_port))
+
+    pressure_bar = float(input("Enter pressure in bar: "))
+
+    client_socket.send(str(pressure_bar).encode())
+    atmosphere_standard = client_socket.recv(1024).decode()
+
+    print(f"Received atmosphere-standard value from server: {atmosphere_standard}")
+
+    client_socket.close()
+
+if __name__ == "__main__":
+    main()
