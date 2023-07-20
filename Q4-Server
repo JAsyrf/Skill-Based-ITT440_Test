@@ -1,0 +1,50 @@
+import socket
+import threading
+import random
+
+# List of quotes
+quotes = [
+    "People often say that motivation doesn't last. Well, neither does bathing -- that's why we recommend it daily.",
+    "Your time is limited, so don't waste it living someone else's life.",
+    "If you cannot do great things, do small things in a great way.",
+    "Nothing is really work unless you would rather be doing something else.",
+    "Be patient with yourself. Self-growth is tender; it's holy ground. There's no greater investment.",
+    "The key to life is accepting challenges. Once someone stops doing this, he's dead.",
+    "Don't let the fear of losing be greater than the excitement of winning"
+]
+
+def handle_client(client_socket):
+    quote = random.choice(quotes)
+    client_socket.send(quote.encode('utf-8'))
+    client_socket.close()
+
+def main():
+    # Create a TCP/IP socket
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_address = ('192.168.206.130', 8888)
+
+    # Bind the socket to the port
+    server_socket.bind(server_address)
+
+    # Listen for incoming connections
+    server_socket.listen(5)
+    print("Server listening on {}:{}".format(*server_address))
+
+    try:
+        while True:
+            # Wait for a connection
+            client_socket, client_address = server_socket.accept()
+            print("Connection from:", client_address)
+
+            # Create a new thread to handle the client's request
+            client_thread = threading.Thread(target=handle_client, args=(client_socket,))
+            client_thread.start()
+    except KeyboardInterrupt:
+        print("Server shutting down...")
+    finally:
+        # Clean up the socket
+        server_socket.close()
+
+if __name__ == "__main__":
+    main()
+
